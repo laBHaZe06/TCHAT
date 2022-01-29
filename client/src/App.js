@@ -3,7 +3,7 @@ import openSocket from 'socket.io-client';
 const socket = openSocket('http://localhost:3001');
 
 class App extends Component {
-
+ 
     constructor(props) {
         super(props);
         this.state = {
@@ -17,7 +17,7 @@ class App extends Component {
             users : []
         }
         this.onChange = this.onChange.bind(this);
-        this.handlePseudo = this.handlePseudo.bind(this);
+        this.handleNickname = this.handleNickname.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.handleMessage = this.handleMessage.bind(this);
     }
@@ -34,7 +34,7 @@ class App extends Component {
                     author: 'system',
                     content: user.username + ' a rejoint le channel',
                     to: '',
-                    chucho: 'no'
+                    whisper: 'no'
                 })
             })
         });
@@ -49,7 +49,7 @@ class App extends Component {
                     author: 'system',
                     content: user.username + ' a changé son pseudo en ' + user.rename,
                     to: '',
-                    chucho: 'no'
+                    whisper: 'no'
                 })
             })
         });
@@ -64,7 +64,7 @@ class App extends Component {
                     author: 'system',
                     content: user.username + ' a quitté le channel',
                     to: '',
-                    chucho: 'no'
+                    whisper: 'no'
                 })
             })
         });
@@ -89,7 +89,7 @@ class App extends Component {
                     author: message.messages.messages.author,
                     content: message.messages.messages.content,
                     to: message.messages.messages.to,
-                    chucho: message.messages.messages.chucho //rename to wisper
+                    whisper: message.messages.messages.whisper
                 })
             })
         })
@@ -106,13 +106,13 @@ class App extends Component {
     }
 
     /*
-    * Pour la connexion
+    * For the connection 
     */
     onChange(event) {
         this.setState({ usertemp: event.target.value })
     }
 
-    handlePseudo(event) {
+    handleNickname(event) {
         event.preventDefault();
         socket.emit('login', { username : this.state.usertemp })
         this.setState({ username: this.state.usertemp })
@@ -129,7 +129,7 @@ class App extends Component {
                 author: this.state.username,
                 content: tab.filter(word => word !== tab[0]).join(' '),
                 to: tab[0],
-                chucho : 'yes'
+                whisper : 'yes'
             }
         });
     }
@@ -138,7 +138,7 @@ class App extends Component {
     /*
     * command's function for /nick
     */
-    commandName(tab, event) {
+    commandNickname(tab, event) {
         socket.emit('rename', {
             username : this.state.username,
             rename : tab[1],
@@ -158,7 +158,7 @@ class App extends Component {
                     author: 'system',
                     content: 'Le channel a bien été créé',
                     to: '',
-                    chucho : 'no'
+                    whisper : 'no'
                 }
             });
             socket.emit('newChannel', {
@@ -173,7 +173,7 @@ class App extends Component {
                     author: 'system',
                     content: 'Ce channel existe déjà',
                     to: '',
-                    chucho : 'no'
+                    whisper : 'no'
                 }
             });
             socket.emit('newmessage', { messages: this.state.tempMessage });
@@ -220,7 +220,7 @@ class App extends Component {
                     author : this.state.username,
                     content: event.target.value,
                     to: '',
-                    chucho: 'no'
+                    whisper: 'no'
                 }
             })
         }
@@ -234,7 +234,7 @@ class App extends Component {
         var tab = this.state.temp.split(' ');
         if(tab[0] === '/nick') {
             if(tab[1] !== undefined && tab[1] !== '') {
-                this.commandName(tab, event);
+                this.commandNickname(tab, event);
             }
             this.setState({temp: ''});
             return false;
@@ -270,7 +270,7 @@ class App extends Component {
             if(message.to !== '' && message.author === this.state.username) {
                 return <span className="msg"><em> Vous avez chuchoté à {message.to}</em> : {message.content} <br/></span>
             }
-            if(message.author !== 'system' && message.chucho === 'no') {
+            if(message.author !== 'system' && message.whisper === 'no') {
                 return <span className="msg"><strong>{message.author}</strong> : {message.content} <br/></span>
             }
         });
@@ -279,7 +279,7 @@ class App extends Component {
    /*
    *  Display users
    */
-   affichMembers() {
+   displayUsersList() {
        return this.state.users.map(user => {
            return <span className="users"> {user} - </span>
        });
@@ -288,7 +288,7 @@ class App extends Component {
    /*
    *  Display channel 
    */
-   affichChannels() {
+   displayChannels() {
        return this.state.channels.map(channel => {
            return <span
                 className="chan"
@@ -316,7 +316,7 @@ class App extends Component {
 
                         <form>
                             <input className='text-sm sm:text-base text-center relative w-full border rounded placeholder-gray-400 focus:border-indigo-400 focus:outline-none py-2 pr-2' type="text" onChange={ this.onChange}/>
-                            <button onClick={this.handlePseudo}>Se connecter</button>
+                            <button onClick={this.handleNickname}>Se connecter</button>
                         </form>
                     </div>
                 </div>
@@ -329,7 +329,7 @@ class App extends Component {
                         <div className="max-w-sm bg-white border-2 border-gray-300 p-6 rounded-md tracking-wide shadow-lg">
                             <div className="rounded text-center relative -mb-px block border  border-grey px-4">
                                 channels <br/>
-                                {this.affichChannels()}
+                                {this.displayChannels()}
                             </div>
                             <div className="text-center">
                                 <em>Bienvenue { this.state.username } sur le channel {this.state.channelSelected}</em>
@@ -364,7 +364,7 @@ class App extends Component {
                         <div className="container mx-auto flex flex-col flex-wrap items-center justify-between">
                             <div className="members">
                                 Liste des membres
-                                {this.affichMembers()}
+                                {this.displayUsersList()}
                             </div>
                         </div>
                     </footer>

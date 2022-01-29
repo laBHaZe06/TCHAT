@@ -1,9 +1,23 @@
 var app = require('express')();
 var http = require('http').createServer(app);
+// const { MongoClient } = require('mongodb');
+//socket.io
 var io = require('socket.io')(http);
+//dotenv
+require('dotenv').config();
 
+//mongoose
+const mongoose = require('mongoose');
+
+main().catch(err => console.log(err));
+
+async function main() {
+  await mongoose.connect('mongodb://localhost:27017/My-irc-tchat-app');
+  console.log("db connecté");
+}
 var users = [];
 var channels = ['#accueil'];
+
 
 io.on('connection', (socket, messages) => {
     var me = '';
