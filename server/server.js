@@ -9,7 +9,7 @@ io.on('connection', (socket, messages) => {
     var me = '';
 
     /*
-    * Connexion d'un utilisateur
+    * Login for the user
     */
     socket.on('login', (user) => {
         users.push(user.username);
@@ -29,7 +29,7 @@ io.on('connection', (socket, messages) => {
     });
 
     /*
-    * Deconnexion d'un utilisateur
+    * Logout for the user
     */
     socket.on('disconnect', (user) => {
         if(me != '') {
@@ -44,7 +44,7 @@ io.on('connection', (socket, messages) => {
     })
 
     /*
-    * Envoi des messages à tous les clients
+    * Send message to everyone / rooms
     */
     socket.on('newmessage', function(message) {
         io.emit('newmsg', {
@@ -53,7 +53,7 @@ io.on('connection', (socket, messages) => {
     })
 
     /*
-    * Changement d'username
+    * Change username / nickname
     */
     socket.on('rename', function(username) {
         me = username.rename;
@@ -69,7 +69,7 @@ io.on('connection', (socket, messages) => {
     })
 
     /*
-    * Création d'un nouveau channel
+    * Create a new channel / rooms
     */
     socket.on('newChannel', function(channel) {
         channels.push('#' + channel.channel);

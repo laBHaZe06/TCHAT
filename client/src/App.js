@@ -25,7 +25,7 @@ class App extends Component {
     componentDidMount() {
 
         /*
-        * Connexion d'un utilisateur
+        * User's connection
         */
         socket.on('newuser', (user) => {
             this.setState({
@@ -40,7 +40,7 @@ class App extends Component {
         });
 
         /*
-        * Rename d'un uilisateur
+        * User's rename
         */
         socket.on('renameuser', (user) => {
             this.setState({
@@ -55,7 +55,7 @@ class App extends Component {
         });
 
         /*
-        * Deconnexion d'un utilisateur
+        * User's disconnection
         */
         socket.on('disuser', (user) => {
             this.setState({
@@ -70,7 +70,7 @@ class App extends Component {
         });
 
         /*
-        * Affichage des utilisateurs
+        * Display users' list
         */
         socket.on('listUsers', (user) => {
             this.setState({users : []});
@@ -80,7 +80,7 @@ class App extends Component {
         })
 
         /*
-        * Définir les messages
+        * Messages' details
         */
         socket.on('newmsg', (message) => {
             this.setState({
@@ -89,13 +89,13 @@ class App extends Component {
                     author: message.messages.messages.author,
                     content: message.messages.messages.content,
                     to: message.messages.messages.to,
-                    chucho: message.messages.messages.chucho
+                    chucho: message.messages.messages.chucho //rename to wisper
                 })
             })
         })
 
         /*
-        * Réception des channels
+        * Display channels' list
         */
         socket.on('listChannels', (channels) => {
             this.setState({channels : []});
@@ -119,7 +119,7 @@ class App extends Component {
     }
 
     /*
-    * Fonction pour commande /msg
+    * command's function for /msg
     */
     commandMsg(tab) {
         tab = tab.filter(word => word !== tab[0]);
@@ -136,7 +136,7 @@ class App extends Component {
 
 
     /*
-    * Fonction pour commande /nick
+    * command's function for /nick
     */
     commandName(tab, event) {
         socket.emit('rename', {
@@ -147,7 +147,7 @@ class App extends Component {
     }
 
     /*
-    * Fonction pour commande /create
+    * command's function for /create
     */
     commandCreate(tab) {
         var listChan = this.state.channels.filter(channel => channel === '#' + tab[1]);
@@ -190,7 +190,7 @@ class App extends Component {
 
 
     /*
-    * Pour l'envoi de message
+    * Message's sending 
     */
     handleChange(event) {
         this.setState({ temp: event.target.value });
@@ -227,7 +227,7 @@ class App extends Component {
     }
 
     /*
-    * Confirmation du formulaire / envoi de message
+    * message sending / form confirm
     */
     handleMessage(event) {
         event.preventDefault();
@@ -256,7 +256,7 @@ class App extends Component {
     }
 
     /*
-    * Afficher les messages
+    * Display messages
     */
     affichMessage() {
         var tab = this.state.messages.filter( messages => messages.channel === this.state.channelSelected);
@@ -277,7 +277,7 @@ class App extends Component {
    }
 
    /*
-   *  Afficher les membres
+   *  Display users
    */
    affichMembers() {
        return this.state.users.map(user => {
@@ -286,7 +286,7 @@ class App extends Component {
    }
 
    /*
-   *  Afficher les channels
+   *  Display channel 
    */
    affichChannels() {
        return this.state.channels.map(channel => {
@@ -300,9 +300,8 @@ class App extends Component {
    }
 
    /*
-   * Rendu
+   * Render
    */
-
     render() {
         if(this.state.username === 'invité') {
             return (
